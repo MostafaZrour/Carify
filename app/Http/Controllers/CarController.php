@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Car;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class CarController extends Controller
@@ -12,7 +13,11 @@ class CarController extends Controller
      */
     public function index()
     {
-        return view("car.index");
+        $cars = User::find(1)
+            ->cars()
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
+        return view("car.index", compact('cars'));
     }
 
     /**
@@ -64,6 +69,26 @@ class CarController extends Controller
     }
     public function search()
     {
-        return view("car.search");
+        $query = Car::where('published_at', '<', now())
+            ->orderBy('published_at', 'desc');
+
+        $carCount = $query->count();
+
+        $cars = $query->limit(30)->get();
+
+        return view("car.search", [
+            'cars' => $cars,
+            'carCount' => $carCount,
+        ]);
+    }
+
+    public function watchlist()
+    {
+        $cars = User::find(4)
+            ->favouriteCars()
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
+
+        return view("car.watchlist", compact('cars'));
     }
 }
