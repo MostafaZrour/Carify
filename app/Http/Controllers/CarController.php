@@ -15,6 +15,7 @@ class CarController extends Controller
     {
         $cars = User::find(1)
             ->cars()
+            ->with(['primaryImage', 'maker', 'model'])
             ->orderBy('created_at', 'desc')
             ->paginate(10);
         return view("car.index", compact('cars'));
@@ -70,6 +71,7 @@ class CarController extends Controller
     public function search()
     {
         $query = Car::where('published_at', '<', now())
+            ->with(['primaryImage', 'city', 'carType', 'fuelType', 'maker', 'model'])
             ->orderBy('published_at', 'desc');
 
         $carCount = $query->count();
@@ -86,6 +88,7 @@ class CarController extends Controller
     {
         $cars = User::find(4)
             ->favouriteCars()
+            ->with(['primaryImage', 'city', 'carType', 'fuelType', 'maker', 'model'])
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 
